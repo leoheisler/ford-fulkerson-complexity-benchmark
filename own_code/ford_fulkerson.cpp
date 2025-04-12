@@ -1,4 +1,5 @@
 #include "_Read.h"
+#include "_Heap.h"
 #include <vector>
 #include <queue>
 #include <stack>
@@ -7,6 +8,57 @@
 
 using namespace std;
 
+/*
+    FATTEST PATH
+
+*/
+bool fattest_path(Graph &residual_graph, int s, int t, std::vector<int> &parent) {
+    int n = residual_graph.get_graph_mem().size();
+
+    // vector holding the max capacity to each vertex
+    std::vector<int> max_cap(n, 0);
+
+    // create binary heap
+    Heap heap(2);
+    
+    // max_capacity for source
+    max_cap[s] = std::numeric_limits<int>::max();
+    heap.insert(max_cap[s], s);
+
+    while (!heap.is_empty()) {
+        //extract max_capacity
+        auto node = heap.extract_max();
+        int u = node.vertex;
+        int cap_u = node.capacity;
+
+        //if u is sink, we found the max capacity due to heap action
+        if (u == t) {
+            return true;
+        }
+
+        // visit each vertex neighbor of u
+        for (const auto &edge : residual_graph.get_neighbors(u)) {
+            int v = edge.target;
+            int cap_left = edge.calculate_capacity_left();
+            if (cap_left > 0) {
+                // max-min capacity for u
+                int new_cap = std::min(cap_u, cap_left);
+                if (new_cap > max_cap[v]) {
+                    max_cap[v] = new_cap;
+                    parent[v] = u;
+                    heap.insert(new_cap, v);  // insert value in heap
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+/*
+    DFS
+
+*/
 bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent) {
     int n = residual_graph.get_graph_mem().size();
     vector<bool> visited(n, false);
@@ -37,7 +89,10 @@ bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent) {
     // if no path was found returns false
     return false;
 }
+/*
+    bfs
 
+*/
 bool bfs( Graph &residual_graph, int s, int t, vector<int> &parent) {
     int n = residual_graph.get_graph_mem().size();
     vector<bool> visited(n, false);
@@ -78,7 +133,7 @@ int ford_fulkerson(Graph &graph, int s, int t) {
     int max_flow = 0;
 
     //while there is a clear path between source and sink add flow
-    while (dfs(graph, s, t, parent)) {
+    while (fattest_path(graph, s, t, parent)) {
         // find the max flow in found flux
         int path_flow = numeric_limits<int>::max();
         for (int v = t; v != s; v = parent[v]) {
