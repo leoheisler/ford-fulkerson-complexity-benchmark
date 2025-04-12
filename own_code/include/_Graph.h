@@ -1,5 +1,7 @@
 #include <vector>
 #include <iostream>
+#ifndef GRAPH_H
+#define GRAPH_H
 
 class Graph {
 public:
@@ -90,3 +92,5 @@ public:
         }
     }
 };
+
+#endif 
