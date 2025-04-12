@@ -7,6 +7,10 @@ public:
         int target;
         int capacity;
         int used_capacity = 0;
+
+        int calculate_capacity_left() const {
+            return capacity - used_capacity;
+        }
     };
 
 private:
@@ -33,22 +37,47 @@ public:
 
 
     //functs
+
+    //add vertex to graph
     void add_vertex(int i) {
         std::vector<Edge> vertex = {};
         this->graph_mem[i] = vertex;
     }
 
+    //rezie graph_memory
     void resize_mem(int n_mem) { 
         this->num_vertex = n_mem;
         graph_mem.resize(n_mem); 
     }
 
+    //add edge to graph
     void add_edge(int source, int target, int capacity) {
         Edge new_edge = { target, capacity, 0 };
         this->num_edges++;
         graph_mem[source].push_back(new_edge);
     }
 
+    // returns the capacity of arc u->v
+    int return_capacity(int u, int v){
+        for (const Edge& edge : graph_mem[u]) {
+            if (edge.target == v) {
+                return edge.capacity - edge.used_capacity;
+            }
+        }
+        return 0;
+    }
+    
+
+    // updates the capacity of edge u->v with value p
+    void update_capacity(int u, int v, int p){
+        for (Edge& edge : graph_mem[u]) {
+            if (edge.target == v) {
+                edge.used_capacity += p;
+            }
+        }
+    }
+    
+    //prints graph
     void print_graph(){
         std::cout << "src_: " << get_src() << " dest_: " << get_dest() << std::endl;
 

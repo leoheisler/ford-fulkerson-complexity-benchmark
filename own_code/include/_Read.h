@@ -46,6 +46,8 @@ public:
         arc >> ac >> u >> v >> c;
         // (2) process arc (u,v) with capacity c
         g.add_edge(u - 1,v - 1,c);
+        // (2.1) add reverse edge for ford-fulkerson
+        g.add_edge(v - 1, u - 1, 0);
       }
     }
   }
