@@ -18,7 +18,7 @@ See more in: https://lpsolve.sourceforge.net/5.5/DIMACS_maxf.htm
 
 ## Build graph generator
 ```bash
-    g++ -o build/graph_gen graph_gen.c 
+    gcc -o build/graph_gen graph_gen.c 
     example: ./build/graph_gen 1 3 3 100 test.gr
 ``` 
 This graph generator was built by:@mpritt
