@@ -12,7 +12,7 @@ bool fattest_path(Graph &residual_graph, int s, int t, std::vector<int> &parent)
 
     // create binary heap
     Heap heap(2);
-    
+
     // max_capacity for source
     max_cap[s] = std::numeric_limits<int>::max();
     heap.insert(max_cap[s], s);

@@ -20,11 +20,12 @@ private:
     int dest;
     int num_vertex;
     int num_edges;
+    int num_itr;
     std::vector<std::vector<Edge>> graph_mem;
 
 public:
     //constructors
-    Graph(): num_vertex(0), num_edges(0){}
+    Graph(): num_vertex(0), num_edges(0), num_itr(0){}
     
     //getters & setters
     int get_num_edges() { return num_edges; }
@@ -33,6 +34,8 @@ public:
     void set_src(int src) { this->src = src; }
     int get_dest() { return dest; }
     void set_dest(int dest) { this->dest = dest; }
+    int get_num_itr(){ return num_itr;}
+    void set_num_itr(int i) { this->num_itr = i; }
     std::vector<std::vector<Edge>> get_graph_mem() { return graph_mem; }
     std::vector<Edge> get_neighbors(int i) { return graph_mem[i]; }
 

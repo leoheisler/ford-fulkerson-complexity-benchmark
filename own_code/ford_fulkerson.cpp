@@ -1,5 +1,8 @@
 #include "search_algorithms.h"
 #include "_Read.h"
+#include <chrono>
+using namespace std::chrono;
+
 
 int fulkerson_family = 0;
 typedef bool (*PathFinder)(Graph&, int, int, vector<int>&);
@@ -11,7 +14,7 @@ typedef bool (*PathFinder)(Graph&, int, int, vector<int>&);
 int ford_fulkerson(Graph &graph, int s, int t) {
 
     int n = graph.get_graph_mem().size();
-    PathFinder path_finder = NULL;
+    PathFinder path_finder = nullptr;
     vector<int> parent(n); 
     int max_flow = 0;
     int i = 0;
@@ -49,10 +52,11 @@ int ford_fulkerson(Graph &graph, int s, int t) {
             graph.update_capacity(u,v, + path_flow);
             graph.update_capacity(v,u, - path_flow);
         }
-        
+         
         // Add flux to total flow
         max_flow += path_flow;
     }
+    graph.set_num_itr(i);
     return max_flow;
 }
 // ARGV ENTRIES (ordered)
@@ -75,7 +79,11 @@ int main(int argc, char* argv[]){
 
     Read::read_dimacs(std::cin,vertex_num, edges_num, g);
 
+    auto start = high_resolution_clock::now();
     int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest());
+    auto stop = high_resolution_clock::now();
+
+    auto duration = duration_cast<milliseconds>(stop - start);
 
     cout << max_flow << endl;
 }
