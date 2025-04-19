@@ -1,30 +1,29 @@
 #include "search_algorithms.h"
-#include "aux_functs.h"
 #include "_Read.h"
 #include <chrono>
 using namespace std::chrono;
 
 
 int fulkerson_family = 0;
-typedef bool (*PathFinder)(Graph&, int, int, vector<int>&);
+typedef bool (*PathFinder)(Graph&, int, int, vector<int>&, Logger&);
 typedef float (*LimitCalc)(int, int, int);
 
 // Ford-fulkerson algorithm
 // 'graph' is the graph, s is the source and t is the sink
 // calculate the max-flow
-int ford_fulkerson(Graph &graph, int s, int t) {
+int ford_fulkerson(Graph &graph, int s, int t, Logger &logger) {
     int n = graph.get_graph_mem().size();
     PathFinder path_finder = nullptr;
     vector<int> parent(n); 
     int max_flow = 0;
-    int i = 0;
+    int i = 0; 
 
     // choose path_finder funct based on entry
     PathFinder arr[] = {fattest_path, bfs, dfs};
     path_finder = arr[fulkerson_family];
 
     //while there is a clear path between source and sink add flow
-    while (path_finder(graph, s, t, parent)) {
+    while (path_finder(graph, s, t, parent, logger)) {
         i++;
         // find the max flow in found flux
         int path_flow = numeric_limits<int>::max();
@@ -65,15 +64,17 @@ int main(int argc, char* argv[]){
     }
     Graph g;
     unsigned edges_num, vertex_num;
-
     Read::read_dimacs(std::cin,vertex_num, edges_num, g);
+    Logger l(g.get_num_edges(), g.get_num_vertex(), fulkerson_family);
+
     //get limits
     LimitCalc arr[] = {max_itr_fattest, max_itr_bfs, max_itr_dfs};
     limit_calc = arr[fulkerson_family];
     float limit = limit_calc(g.get_num_edges(), g.get_num_vertex(), g.get_max_c());
+
     //call functs && get duration
     auto start = high_resolution_clock::now();
-    int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest());
+    int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest(), l);
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop - start);
 

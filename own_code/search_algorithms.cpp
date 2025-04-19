@@ -4,7 +4,7 @@
     FATTEST PATH
 
 */
-bool fattest_path(Graph &residual_graph, int s, int t, std::vector<int> &parent) {
+bool fattest_path(Graph &residual_graph, int s, int t, std::vector<int> &parent, Logger& logger) {
     int n = residual_graph.get_graph_mem().size();
 
     // vector holding the max capacity to each vertex
@@ -52,35 +52,49 @@ bool fattest_path(Graph &residual_graph, int s, int t, std::vector<int> &parent)
 
 */
 
-bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent) {
-    int n = residual_graph.get_graph_mem().size();
-    vector<bool> visited(n, false);
-    stack<int> st;
-    
-    st.push(s);
-    visited[s] = true;
-    parent[s] = -1;  // src does not have a parent
+bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent, Logger& logger) {
+  int n = residual_graph.get_graph_mem().size();
+  vector<bool> visited(n, false);
+  stack<int> st;
 
-    while(!st.empty()){
-        int u = st.top();
-        st.pop();
 
-        //check for every neighbor in u
-        for (const Graph::Edge& edge : residual_graph.get_neighbors(u)) {
-            int target = edge.target;
-            //check neighbor has a capacity link to v
-            if (!visited[target] && edge.calculate_capacity_left() > 0) {
-                parent[target] = u;
-                visited[target] = true;
-                // if neighbor is sink returns true
-                if (target == t) 
-                    return true;
-                st.push(target);
-            }
+  int visited_vertices = 0;
+  int visited_edges = 0;
+  
+  st.push(s);
+  visited[s] = true;
+  parent[s] = -1;  // src does not have a parent
+  visited_vertices++;
+
+  while(!st.empty()){
+    int u = st.top();
+    st.pop();
+
+    //check for every neighbor in u
+    for (const Graph::Edge& edge : residual_graph.get_neighbors(u)) {
+      int target = edge.target;
+      if (edge.calculate_capacity_left() > 0 ){ 
+        visited_edges++;
+
+        //check neighbor has a capacity link to v
+        if (!visited[target]) {
+          parent[target] = u;
+          visited[target] = true;
+          visited_vertices++;
+
+          // if neighbor is sink returns true
+          if (target == t){
+            logger.log_iteration(visited_vertices, visited_edges);
+            return true;
+          } 
+          st.push(target);
         }
+      } 
     }
-    // if no path was found returns false
-    return false;
+  }
+  // if no path was found returns false
+  logger.log_iteration(visited_vertices, visited_edges);
+  return false;
 }
 
 
@@ -88,7 +102,7 @@ bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent) {
     bfs
 
 */
-bool bfs( Graph &residual_graph, int s, int t, vector<int> &parent) {
+bool bfs( Graph &residual_graph, int s, int t, vector<int> &parent, Logger& logger) {
     int n = residual_graph.get_graph_mem().size();
     vector<bool> visited(n, false);
     queue<int> q;
