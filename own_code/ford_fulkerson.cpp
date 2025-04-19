@@ -70,12 +70,15 @@ int main(int argc, char* argv[]){
     //get limits
     LimitCalc arr[] = {max_itr_fattest, max_itr_bfs, max_itr_dfs};
     limit_calc = arr[fulkerson_family];
-
+    float limit = limit_calc(g.get_num_edges(), g.get_num_vertex(), g.get_max_c());
+    //call functs && get duration
     auto start = high_resolution_clock::now();
     int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest());
     auto stop = high_resolution_clock::now();
-
     auto duration = duration_cast<milliseconds>(stop - start);
 
+    //print results
     cout << max_flow << endl;
+    cout << duration.count() << "ms" << endl;
+    cout << g.get_num_itr() / limit << endl;
 }
