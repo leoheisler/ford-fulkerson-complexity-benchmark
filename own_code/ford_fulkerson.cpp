@@ -1,4 +1,5 @@
 #include "search_algorithms.h"
+#include "aux_functs.h"
 #include "_Read.h"
 #include <chrono>
 using namespace std::chrono;
@@ -6,13 +7,12 @@ using namespace std::chrono;
 
 int fulkerson_family = 0;
 typedef bool (*PathFinder)(Graph&, int, int, vector<int>&);
-
+typedef float (*LimitCalc)(int, int, int);
 
 // Ford-fulkerson algorithm
 // 'graph' is the graph, s is the source and t is the sink
 // calculate the max-flow
 int ford_fulkerson(Graph &graph, int s, int t) {
-
     int n = graph.get_graph_mem().size();
     PathFinder path_finder = nullptr;
     vector<int> parent(n); 
@@ -20,20 +20,8 @@ int ford_fulkerson(Graph &graph, int s, int t) {
     int i = 0;
 
     // choose path_finder funct based on entry
-    switch(fulkerson_family) {
-        case 0:
-            path_finder = fattest_path;
-            break;
-        case 1:
-            path_finder = bfs;
-            break;
-        case 2:
-            path_finder = dfs;
-            break;
-        default:
-            cerr << "Error: fulkerson_family invalid." << endl;
-            exit(EXIT_FAILURE);
-    }
+    PathFinder arr[] = {fattest_path, bfs, dfs};
+    path_finder = arr[fulkerson_family];
 
     //while there is a clear path between source and sink add flow
     while (path_finder(graph, s, t, parent)) {
@@ -67,6 +55,7 @@ int ford_fulkerson(Graph &graph, int s, int t) {
 // OR, without any parameter, just prints max_flow
 // ex: ./build/ford_fulkerson
 int main(int argc, char* argv[]){
+    LimitCalc limit_calc = nullptr;
     string test_file = "";
     string outfile = "";
     if( argc >= 2 ){
@@ -78,6 +67,9 @@ int main(int argc, char* argv[]){
     unsigned edges_num, vertex_num;
 
     Read::read_dimacs(std::cin,vertex_num, edges_num, g);
+    //get limits
+    LimitCalc arr[] = {max_itr_fattest, max_itr_bfs, max_itr_dfs};
+    limit_calc = arr[fulkerson_family];
 
     auto start = high_resolution_clock::now();
     int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest());

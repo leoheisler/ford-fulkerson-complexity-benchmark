@@ -21,6 +21,7 @@ private:
     int num_vertex;
     int num_edges;
     int num_itr;
+    int max_c;
     std::vector<std::vector<Edge>> graph_mem;
 
 public:
@@ -36,6 +37,9 @@ public:
     void set_dest(int dest) { this->dest = dest; }
     int get_num_itr(){ return num_itr;}
     void set_num_itr(int i) { this->num_itr = i; }
+    int get_max_c() { return max_c; }
+    void set_max_c(int c) { this->max_c = c; }
+
     std::vector<std::vector<Edge>> get_graph_mem() { return graph_mem; }
     std::vector<Edge> get_neighbors(int i) { return graph_mem[i]; }
 
@@ -49,7 +53,7 @@ public:
         this->graph_mem[i] = vertex;
     }
 
-    //rezie graph_memory
+    //resize graph_memory
     void resize_mem(int n_mem) { 
         this->num_vertex = n_mem;
         graph_mem.resize(n_mem); 

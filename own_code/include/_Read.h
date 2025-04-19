@@ -10,6 +10,7 @@ public:
 
   static void read_dimacs(std::istream& in, unsigned& vertex_num, unsigned& edges_num, Graph& g) {
     std::string line="", dummy;
+    int max_c = 0;
     while (line.substr(0,5) != "p max")
       getline(in,line);
   
@@ -44,11 +45,18 @@ public:
         unsigned u,v,c;
         char ac;
         arc >> ac >> u >> v >> c;
+
+        if(c > max_c){
+          max_c = c;
+        }
+
         // (2) process arc (u,v) with capacity c
         g.add_edge(u - 1,v - 1,c);
         // (2.1) add reverse edge for ford-fulkerson
         g.add_edge(v - 1, u - 1, 0);
       }
     }
+
+    g.set_max_c(max_c);
   }
 };
