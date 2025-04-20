@@ -99,36 +99,51 @@ bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent, Logger& logg
 
 
 /*
-    bfs
+    BFS
 
 */
 bool bfs( Graph &residual_graph, int s, int t, vector<int> &parent, Logger& logger) {
-    int n = residual_graph.get_graph_mem().size();
-    vector<bool> visited(n, false);
-    queue<int> q;
-    
-    q.push(s);
-    visited[s] = true;
-    parent[s] = -1;  // src does not have a parent
+  int n = residual_graph.get_graph_mem().size();
+  vector<bool> visited(n, false);
+  queue<int> q;
+  
+  int visited_vertices = 0;
+  int visited_edges = 0;
 
-    while(!q.empty()){
-        int u = q.front();
-        q.pop();
+  q.push(s);
+  visited[s] = true;
+  parent[s] = -1;  // src does not have a parent
+  visited_vertices++;
 
-        //check for every neighbor in u
-        for (const Graph::Edge& edge : residual_graph.get_neighbors(u)) {
-            int target = edge.target;
-            //check neighbor has a capacity link to v
-            if (!visited[target] && edge.calculate_capacity_left() > 0) {
-                q.push(target);
-                parent[target] = u;
-                visited[target] = true;
-                // if neighbor is sink returns true
-                if (target == t) 
-                    return true;
-            }
+  while(!q.empty()){
+    int u = q.front();
+    q.pop();
+
+    //check for every neighbor in u
+    for (const Graph::Edge& edge : residual_graph.get_neighbors(u)) {
+      int target = edge.target;
+
+      if(edge.calculate_capacity_left() > 0 ){
+        visited_edges++;  
+
+        //check neighbor has a capacity link to v
+        if (!visited[target]) {
+          q.push(target);
+          parent[target] = u;
+          visited[target] = true;
+          visited_vertices++;
+
+          // if neighbor is sink returns true
+          if (target == t){
+            logger.log_iteration(visited_vertices, visited_edges);
+            return true;
+          }
         }
+      }
+
     }
-    // if no path was found returns false
-    return false;
+  }
+  // if no path was found returns false
+  logger.log_iteration(visited_vertices, visited_edges);
+  return false;
 }
