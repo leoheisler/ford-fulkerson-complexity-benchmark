@@ -15,6 +15,10 @@ private:
 
     std::vector<Node> heap_queue = {};
     std::unordered_map<int,int> vertex_heap_map;
+    unsigned num_inserts = 0;
+    unsigned num_updates = 0;
+    unsigned num_deletes = 0;
+
 
     /*  PRIVATE FUNCTS */
     // Returns parent heap index
@@ -74,18 +78,23 @@ public:
     Heap(int k): k(k) {}
 
     //heap functions
+    unsigned get_num_inserts(){ return this->num_inserts; }
+    unsigned get_num_deletes(){ return this->num_deletes; }
+    unsigned get_num_updates(){ return this->num_updates; }
+
     //Inserts node in heap 
     void insert(unsigned capacity, unsigned vertex) {
 
         if (vertex_heap_map.count(vertex)) {
             //update capacity if vertex is already in heap
             if (capacity < heap_queue[vertex_heap_map[vertex]].capacity) {
-
+                num_updates++;
                 heap_queue[vertex_heap_map[vertex]].capacity = capacity;
 
                 sift_up(vertex_heap_map[vertex]);
             }
         } else {
+            num_inserts++;
 
             Node new_vertex = {capacity,vertex};
             heap_queue.push_back(new_vertex);
@@ -99,7 +108,8 @@ public:
     
     //extract min
     Node extract_max() {
-        
+        num_deletes++;
+
         //release first node
         Node min_node = heap_queue[0];
         vertex_heap_map.erase(min_node.vertex);

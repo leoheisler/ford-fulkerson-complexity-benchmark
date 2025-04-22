@@ -25,6 +25,7 @@ bool fattest_path(Graph &residual_graph, int s, int t, std::vector<int> &parent,
 
         //if u is sink, we found the max capacity due to heap action
         if (u == t) {
+            logger.log_fattest_itr(heap.get_num_inserts(), heap.get_num_deletes(), heap.get_num_updates());
             return true;
         }
 
@@ -43,7 +44,7 @@ bool fattest_path(Graph &residual_graph, int s, int t, std::vector<int> &parent,
             }
         }
     }
-
+    logger.log_fattest_itr(heap.get_num_inserts(), heap.get_num_deletes(), heap.get_num_updates());
     return false;
 }
 
