@@ -7,7 +7,7 @@
 class Read
 {
 public:
-
+ 
   static void read_dimacs(std::istream& in, unsigned& vertex_num, unsigned& edges_num, Graph& g) {
     std::string line="", dummy;
     int max_c = 0;

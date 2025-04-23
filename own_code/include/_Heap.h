@@ -8,7 +8,7 @@ struct Node{
     unsigned capacity;
     unsigned vertex;
 };
-
+ 
 private:
     //control vars
     int k;
@@ -88,6 +88,7 @@ public:
         if (vertex_heap_map.count(vertex)) {
             //update capacity if vertex is already in heap
             if (capacity < heap_queue[vertex_heap_map[vertex]].capacity) {
+                std::cout << "update!" << std::endl;
                 num_updates++;
                 heap_queue[vertex_heap_map[vertex]].capacity = capacity;
 

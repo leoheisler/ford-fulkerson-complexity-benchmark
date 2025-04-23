@@ -86,23 +86,51 @@ int main(int argc, char* argv[]){
     auto start = high_resolution_clock::now();
     int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest(), l);
     auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>(stop - start);
+    auto duration = duration_cast<nanoseconds>(stop - start);
+    long long tempo_ns = duration.count();
+    long long n = g.get_num_vertex();
+    long long m = g.get_num_edges();
+
+    // cálculo da complexidade pessimista
+    long long complexidade = n * m * (n + m);
+
+    // comparação tempo real / complexidade teórica
+    double resultado = (double)tempo_ns / complexidade;
 
     //print results
 
     auto si_l = l.get_si() / g.get_num_itr();
     auto ti_l =  l.get_ti() / g.get_num_itr();
+
+    cout <<" result:  ";
     cout << max_flow << endl;
-    cout << duration.count() << "ms" << endl;
-    cout << duration.count() /( g.get_num_edges() * g.get_num_vertex() * ( g.get_num_edges() + g.get_num_vertex())) << endl;
+
+    cout <<" duracao: ";
+    cout << duration.count()/1e6 << "us" << endl;
+
+    cout << "Tempo / Complexidade: " << resultado << endl;
+
+    cout <<" itr: ";
     cout << g.get_num_itr() / limit << endl;
+
+    cout <<" si(dfs/bfs): ";
     cout << si_l << endl;
+
+    cout <<" ti(dfs/bfs): ";
     cout << ti_l << endl;
+  
+    cout <<" inserts: ";
     cout << l.get_inserts() / g.get_num_itr() << endl;
+
+    cout <<" deletrs: ";
     cout << l.get_deletes() / g.get_num_itr() << endl;
+
+    cout <<" updates: ";
     cout << l.get_updates() / g.get_num_itr() << endl;
+
+    cout <<" smallest path: ";
     cout << smallest_path << endl;
-    cout << si_l*g.get_num_vertex() + ti_l*g.get_num_edges() + accumulate(hops_per_itr.begin(), hops_per_itr.end(), 0);
 
-
+    cout <<" estimativa estranha: ";
+    cout << si_l*g.get_num_vertex() + ti_l*g.get_num_edges() + accumulate(hops_per_itr.begin(), hops_per_itr.end(), 0) << endl;
 }

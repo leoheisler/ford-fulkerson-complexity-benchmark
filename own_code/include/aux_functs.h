@@ -14,7 +14,7 @@ class Logger {
       int graph_edges;
       int graph_vertices;
       int log_type;
-
+ 
       std::vector<float> inserts;
       std::vector<float> deletes;
       std::vector<float> updates;

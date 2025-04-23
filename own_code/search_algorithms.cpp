@@ -97,7 +97,7 @@ bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent, Logger& logg
   logger.log_iteration(visited_vertices, visited_edges);
   return false;
 }
-
+  
 
 /*
     BFS
