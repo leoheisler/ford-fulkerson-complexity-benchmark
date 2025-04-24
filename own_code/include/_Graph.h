@@ -38,7 +38,6 @@ public:
     int get_num_itr(){ return num_itr;}
     void set_num_itr(int i) { this->num_itr = i; }
     int get_max_c() { return max_c; }
-    void set_max_c(int c) { this->max_c = c; }
 
     std::vector<std::vector<Edge>> get_graph_mem() { return graph_mem; }
     std::vector<Edge> get_neighbors(int i) { return graph_mem[i]; }
@@ -97,6 +96,14 @@ public:
             for(std::size_t  j = 0; j < edges.size(); j++)
                 std::cout << "   target: " << edges[j].target + 1 << " capacidade:" << edges[j].capacity << std::endl;
         }
+    }
+
+    void set_max_C(int src){
+      // zera e acumula todas as capacidades das arestas de saída de s
+      max_c = 0;
+      for (const auto &e : graph_mem[src]) {
+          max_c += e.capacity;
+      }
     }
 };
 

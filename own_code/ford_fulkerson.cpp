@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
       if (!csv_file.is_open()) {
         std::cerr << "Error opening csv_file\n";
         return 1;
-      }  
+      }   
     }
 
 
