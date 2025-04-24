@@ -1,4 +1,5 @@
 #include "aux_functs.h"
+#include <iostream>
 
 float max_itr_dfs(int num_edges, int num_vertex, int num_c){
   return float(num_c);

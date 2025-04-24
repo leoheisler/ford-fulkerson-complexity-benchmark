@@ -1,6 +1,7 @@
 #include "search_algorithms.h"
 #include "_Read.h"
 #include <chrono>
+#include <fstream>
 using namespace std::chrono;
 
 vector<int> hops_per_itr;
@@ -64,6 +65,7 @@ int ford_fulkerson(Graph &graph, int s, int t, Logger &logger) {
 // OR, without any parameter, just prints max_flow
 // ex: ./build/ford_fulkerson
 int main(int argc, char* argv[]){
+    //start instances
     LimitCalc limit_calc = nullptr;
     string test_file = "";
     string outfile = "";
@@ -76,6 +78,17 @@ int main(int argc, char* argv[]){
     unsigned edges_num, vertex_num;
     Read::read_dimacs(std::cin,vertex_num, edges_num, g);
     Logger l(g.get_num_edges(), g.get_num_vertex(), fulkerson_family);
+    std::ofstream csv_file;
+
+    if( outfile != "" ) {
+      csv_file.open(outfile, std::ios::app);
+
+      if (!csv_file.is_open()) {
+        std::cerr << "Error opening csv_file\n";
+        return 1;
+      }  
+    }
+
 
     //get limits
     LimitCalc arr[] = {max_itr_fattest, max_itr_bfs, max_itr_dfs};
@@ -87,50 +100,40 @@ int main(int argc, char* argv[]){
     int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest(), l);
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(stop - start);
+    //print results
+    cout << max_flow << endl;
+
+    /* DATA ANALISIS FOR FF FUNCTS */
+    //pessimistic complexity calc
     long long tempo_ns = duration.count();
     long long n = g.get_num_vertex();
     long long m = g.get_num_edges();
 
-    // cálculo da complexidade pessimista
-    long long complexidade = n * m * (n + m);
+    long long complexity = n * m * (n + m);
 
-    // comparação tempo real / complexidade teórica
-    double resultado = (double)tempo_ns / complexidade;
-
-    //print results
+    // real_time / complexity
+    double real_over_theoretical = (double)tempo_ns / complexity;
 
     auto si_l = l.get_si() / g.get_num_itr();
     auto ti_l =  l.get_ti() / g.get_num_itr();
 
-    cout <<" result:  ";
-    cout << max_flow << endl;
+    if(csv_file.is_open()){
+      csv_file << test_file << ",";
+      csv_file << g.get_num_vertex() << ",";
+      csv_file << g.get_num_edges() << ",";
+      csv_file << g.get_num_itr() << ",";
+      csv_file << limit << ",";
+      csv_file << g.get_num_itr() / limit << ',';
+      csv_file << si_l << ',';
+      csv_file << ti_l << ',';
+      csv_file << l.get_inserts() / g.get_num_itr()  << ',';
+      csv_file << l.get_deletes() / g.get_num_itr() << ',';
+      csv_file << l.get_updates() / g.get_num_itr() << ',';
+      csv_file << smallest_path << ',';
+      csv_file << si_l*g.get_num_vertex() + ti_l*g.get_num_edges() + accumulate(hops_per_itr.begin(), hops_per_itr.end(), 0) << ',';
+      csv_file << duration.count()/1e6 << ",";
+      csv_file << real_over_theoretical << '\n';
 
-    cout <<" duracao: ";
-    cout << duration.count()/1e6 << "us" << endl;
-
-    cout << "Tempo / Complexidade: " << resultado << endl;
-
-    cout <<" itr: ";
-    cout << g.get_num_itr() / limit << endl;
-
-    cout <<" si(dfs/bfs): ";
-    cout << si_l << endl;
-
-    cout <<" ti(dfs/bfs): ";
-    cout << ti_l << endl;
-  
-    cout <<" inserts: ";
-    cout << l.get_inserts() / g.get_num_itr() << endl;
-
-    cout <<" deletrs: ";
-    cout << l.get_deletes() / g.get_num_itr() << endl;
-
-    cout <<" updates: ";
-    cout << l.get_updates() / g.get_num_itr() << endl;
-
-    cout <<" smallest path: ";
-    cout << smallest_path << endl;
-
-    cout <<" estimativa estranha: ";
-    cout << si_l*g.get_num_vertex() + ti_l*g.get_num_edges() + accumulate(hops_per_itr.begin(), hops_per_itr.end(), 0) << endl;
+      csv_file.close();
+    }
 }
