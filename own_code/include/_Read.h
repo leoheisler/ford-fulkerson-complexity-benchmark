@@ -9,10 +9,10 @@ class Read
 public:
 static const int INF = std::numeric_limits<int>::max();
 
-static void read_tournament(std::istream& in, Graph& g) {
+static int read_tournament(std::istream& in, Graph& g) {
     std::string line;
     int num_teams;
-
+    bool oh_ou = false;
     // 1) Read number of teams
     std::getline(in, line);
     std::stringstream ss(line);
@@ -53,29 +53,36 @@ static void read_tournament(std::istream& in, Graph& g) {
             if (g_ij > 0) {
                 // source -> game node
                 g.add_edge(0, game_node, g_ij);
-                //g.add_edge(game_node, 0, 0);
-                // game node -> team i
-                g.add_edge(game_node, 2 + i, INF);
-                //g.add_edge(2 + i, game_node, 0);
+                g.add_edge(game_node, 0, 0);
+
+                // game node -> team i, does not add if it is the first team
+                if(i != 0 ){
+                  g.add_edge(game_node, 2 + i, INF);
+                  g.add_edge(2 + i, game_node, 0);  
+                }
+
                 // game node -> team j
                 g.add_edge(game_node, 2 + j, INF);
-                //g.add_edge(2 + j, game_node, 0);
+                g.add_edge(2 + j, game_node, 0);
+
                 // accumulate team 1 games
-                if (i == 0 || j == 0) r1 += g_ij;
+                if (i == 0) r1 += g_ij;
                 game_node++;
             } else {
                 game_node++;
             }
         }
     }
-
+    
     // 5) Compute capacity limits m_i and add team->sink edges
-    for (int i = 0; i < num_teams; i++) {
-        int mi = wins[0] + r1 - wins[i + 1] - 1;
-        //if (mi < 0) mi = 0;
+    for (int i = 1; i < num_teams; i++) {
+        int mi = wins[0] + r1 - wins[i] - 1;
+        if (mi < 0) oh_ou = true;
         g.add_edge(2 + i, 1, mi);
-        //g.add_edge(1, 2 + i, 0);
+        g.add_edge(1, 2 + i, 0);
     }
+
+  return oh_ou;
 }
 
   static void read_dimacs(std::istream& in, unsigned& vertex_num, unsigned& edges_num, Graph& g) {

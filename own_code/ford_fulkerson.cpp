@@ -64,13 +64,17 @@ int ford_fulkerson(Graph &graph, int s, int t, Logger &logger) {
 // ex: ./build/ford_fulkerson 1 test.csv test.gr < test.gr
 // OR, without any parameter, just prints max_flow
 // ex: ./build/ford_fulkerson 
-int main(int argc, char* argv[]){
-    //start instances   
-    Graph g;
-  
-    Read::read_tournament(std::cin,g);
-    g.print_graph(); 
-    /*    
+int main(int argc, char* argv[]){ 
+    //start instances    
+    Graph g; 
+   
+    bool oh_ou = Read::read_tournament(std::cin,g);
+    if(oh_ou){
+      cout << "nao vai ta dando" << endl;
+    }else{
+      cout << "executando ford-fulkerson" << endl;
+    }
+    /*        
     Logger l(g.get_num_edges(), g.get_num_vertex(), fulkerson_family);
     std::ofstream csv_file;
 

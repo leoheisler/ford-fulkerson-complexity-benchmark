@@ -95,7 +95,8 @@ public:
           // Edges from game node
           std::cout << "    Game node " << edge.target << " edges:" << std::endl;
           for (const auto& ge : graph_mem[edge.target]) {
-              std::cout << "      to team " << ge.target - 1 << " capacity=" << ge.capacity << std::endl;
+              int a = ge.target == 0 ? 0 : ge.target - 1;
+              std::cout << "      to team " << a << " capacity=" << ge.capacity << std::endl;
               // Edges from team node if it's a team
               if (ge.target >= 2 && ge.target < 2 + graph_mem.size()) {
                   std::cout << "        Team node " << ge.target - 1 << " edges:" << std::endl;
