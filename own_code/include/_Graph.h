@@ -85,19 +85,27 @@ public:
         }
     }
     
-    //prints graph
-    void print_graph(){
-        std::cout << "src_: " << get_src() << " dest_: " << get_dest() << std::endl;
-
-        std::vector<Graph::Edge> edges;
-        for(std::size_t  i = 0; i < graph_mem.size(); i++){
-            edges = graph_mem[i];
-            std::cout << "nodo: " << i + 1 << std::endl;
-            for(std::size_t  j = 0; j < edges.size(); j++)
-                std::cout << "   target: " << edges[j].target + 1 << " capacidade:" << edges[j].capacity << std::endl;
-        }
+    void print_graph() {
+      std::cout << "Source: " << get_src() << ", Sink: " << get_dest() << std::endl;
+      int src = get_src();
+      // Edges from source
+      std::cout << "Edges from source node " << src << ":" << std::endl;
+      for (const auto& edge : graph_mem[src]) {
+          std::cout << "  to Game node " << edge.target << " capacity=" << edge.capacity << std::endl;
+          // Edges from game node
+          std::cout << "    Game node " << edge.target << " edges:" << std::endl;
+          for (const auto& ge : graph_mem[edge.target]) {
+              std::cout << "      to team " << ge.target - 1 << " capacity=" << ge.capacity << std::endl;
+              // Edges from team node if it's a team
+              if (ge.target >= 2 && ge.target < 2 + graph_mem.size()) {
+                  std::cout << "        Team node " << ge.target - 1 << " edges:" << std::endl;
+                  for (const auto& te : graph_mem[ge.target]) {
+                      std::cout << "          to sink " << te.target << " capacity=" << te.capacity << std::endl;
+                  }
+              }
+          }
+      }
     }
-
     void set_max_C(int src){
       // zera e acumula todas as capacidades das arestas de saída de s
       max_c = 0;

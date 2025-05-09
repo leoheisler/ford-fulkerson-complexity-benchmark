@@ -34,7 +34,7 @@ int ford_fulkerson(Graph &graph, int s, int t, Logger &logger) {
             int u = parent[v];
             int uv_capacity = graph.return_capacity(u,v);
             path_flow = min(path_flow, uv_capacity);
-        }
+        }   
         
         // update residual capacities with max flow possible in found path
         for (int v = t; v != s; v = parent[v]) {
@@ -63,20 +63,14 @@ int ford_fulkerson(Graph &graph, int s, int t, Logger &logger) {
 // char* test_file < test file name
 // ex: ./build/ford_fulkerson 1 test.csv test.gr < test.gr
 // OR, without any parameter, just prints max_flow
-// ex: ./build/ford_fulkerson
+// ex: ./build/ford_fulkerson 
 int main(int argc, char* argv[]){
-    //start instances
-    LimitCalc limit_calc = nullptr;
-    string test_file = "";
-    string outfile = "";
-    if( argc >= 2 ){
-      fulkerson_family = atoi(argv[1]);
-      outfile = argv[2];
-      test_file = argv[3];
-    }
+    //start instances   
     Graph g;
-    unsigned edges_num, vertex_num;
-    Read::read_dimacs(std::cin,vertex_num, edges_num, g);
+  
+    Read::read_tournament(std::cin,g);
+    g.print_graph(); 
+    /*    
     Logger l(g.get_num_edges(), g.get_num_vertex(), fulkerson_family);
     std::ofstream csv_file;
 
@@ -105,6 +99,7 @@ int main(int argc, char* argv[]){
 
     /* DATA ANALISIS FOR FF FUNCTS */
     //pessimistic complexity calc
+    /*
     long long tempo_ns = duration.count();
     long long n = g.get_num_vertex();
     long long m = g.get_num_edges();
@@ -136,4 +131,5 @@ int main(int argc, char* argv[]){
 
       csv_file.close();
     }
+  */
 }
