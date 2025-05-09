@@ -69,10 +69,11 @@ int main(int argc, char* argv[]){
     Graph g; 
    
     bool oh_ou = Read::read_tournament(std::cin,g);
+    //g.print_graph();
     if(oh_ou){
-      cout << "nao vai ta dando" << endl;
+      cout << "nao" << endl;
     }else{
-      cout << "executando ford-fulkerson" << endl;
+      cout << "sim" << endl;  
     }
     /*        
     Logger l(g.get_num_edges(), g.get_num_vertex(), fulkerson_family);

@@ -72,7 +72,14 @@ static int read_tournament(std::istream& in, Graph& g) {
       }
     }
   }
-    
+
+  /*
+  cout << "vitorias: " << endl;
+  for (int i = 0; i < num_teams; i++){
+    cout << "time "<< i + 1 << " : "<< wins[i] << endl;
+  }
+  cout << "r1: " << r1 << endl;
+  */
   // 5) Compute capacity limits m_i and add team->sink edges
   for (int i = 1; i < num_teams; i++) {
     int mi = wins[0] + r1 - wins[i] - 1;
@@ -81,6 +88,14 @@ static int read_tournament(std::istream& in, Graph& g) {
     g.add_edge(1, 2 + i, 0);
   }
 
+  /*
+  const auto& a = g.get_graph_mem();
+  for (int i = 0; i < num_teams; i++){
+    for (const auto& te : a[i + 2]) {
+      std::cout << "time : " << i + 1 << " to " << te.target << " mi= " << te.capacity << std::endl;
+    }  
+  }
+  */
   return oh_ou;
 }
 
