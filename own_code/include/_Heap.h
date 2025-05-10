@@ -12,7 +12,7 @@ struct Node{
 private:
     //control vars
     int k;
-
+ 
     std::vector<Node> heap_queue = {};
     std::unordered_map<int,int> vertex_heap_map;
     unsigned num_inserts = 0;

@@ -21,13 +21,15 @@ private:
     int num_vertex;
     int num_edges;
     int num_itr;
+    int num_equipes;
+    int total_games;
     int max_c;
     std::vector<std::vector<Edge>> graph_mem;
 
 public:
     //constructors
     Graph(): num_vertex(0), num_edges(0), num_itr(0){}
-    
+     
     //getters & setters
     int get_num_edges() { return num_edges; }
     int get_num_vertex() { return num_vertex; }
@@ -37,6 +39,10 @@ public:
     void set_dest(int dest) { this->dest = dest; }
     int get_num_itr(){ return num_itr;}
     void set_num_itr(int i) { this->num_itr = i; }
+    int get_num_teams() { return this->num_equipes; }
+    void set_num_teams(int num) { this->num_equipes = num; }
+    int get_total_games() { return this->total_games; }
+    void set_total_games(int num) { this->total_games = num; }
     int get_max_c() { return max_c; }
 
     std::vector<std::vector<Edge>> get_graph_mem() { return graph_mem; }

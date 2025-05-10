@@ -61,7 +61,7 @@ bool dfs( Graph &residual_graph, int s, int t, vector<int> &parent, Logger& logg
 
   int visited_vertices = 0;
   int visited_edges = 0;
-  
+   
   st.push(s);
   visited[s] = true;
   parent[s] = -1;  // src does not have a parent

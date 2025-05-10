@@ -4,11 +4,12 @@
 #include <fstream>
 using namespace std::chrono;
 
+typedef bool (*PathFinder)(Graph&, int, int, vector<int>&, Logger&);
+typedef float (*LimitCalc)(int, int, int);
+
 vector<int> hops_per_itr;
 int smallest_path = INT8_MAX;
 int fulkerson_family = 0;
-typedef bool (*PathFinder)(Graph&, int, int, vector<int>&, Logger&);
-typedef float (*LimitCalc)(int, int, int);
 
 // Ford-fulkerson algorithm
 // 'graph' is the graph, s is the source and t is the sink
@@ -24,7 +25,7 @@ int ford_fulkerson(Graph &graph, int s, int t, Logger &logger) {
     // choose path_finder funct based on entry
     PathFinder arr[] = {fattest_path, bfs, dfs};
     path_finder = arr[fulkerson_family];
-
+ 
     //while there is a clear path between source and sink add flow
     while (path_finder(graph, s, t, parent, logger)) {
         i++;
@@ -58,24 +59,18 @@ int ford_fulkerson(Graph &graph, int s, int t, Logger &logger) {
     return max_flow;
 }
 // ARGV ENTRIES (ordered)
-// int fulkerson_family < enum for function chose, 0 = fattest, 1 = bfs, 2 = dfs, 3+ error
-// char* outfile < file where values of tests will be stored
-// char* test_file < test file name
-// ex: ./build/ford_fulkerson 1 test.csv test.gr < test.gr
-// OR, without any parameter, just prints max_flow
+// int, should output timinings
 // ex: ./build/ford_fulkerson 
 int main(int argc, char* argv[]){ 
-    //start instances    
+    //start instances 
+    bool should_doc_time = false ;
+    if (argc > 1){
+      should_doc_time = atoi(argv[1]);
+    }  
     Graph g; 
-   
-    bool oh_ou = Read::read_tournament(std::cin,g);
-    //g.print_graph();
-    if(oh_ou){
-      cout << "nao" << endl;
-    }else{
-      cout << "sim" << endl;  
-    }
-    /*        
+    string outfile = "./results/timings.csv";
+    fulkerson_family = 0;
+
     Logger l(g.get_num_edges(), g.get_num_vertex(), fulkerson_family);
     std::ofstream csv_file;
 
@@ -88,53 +83,33 @@ int main(int argc, char* argv[]){
       }   
     }
 
-
-    //get limits
-    LimitCalc arr[] = {max_itr_fattest, max_itr_bfs, max_itr_dfs};
-    limit_calc = arr[fulkerson_family];
-    float limit = limit_calc(g.get_num_edges(), g.get_num_vertex(), g.get_max_c());
-
-    //call functs && get duration
     auto start = high_resolution_clock::now();
-    int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest(), l);
+    bool oh_ou = Read::read_tournament(std::cin,g);
+    //g.print_graph();
+    if(oh_ou){
+      cout << "nao" << endl;
+    }else{
+      int max_flow = ford_fulkerson(g, g.get_src(), g.get_dest(), l);
+
+      if( max_flow == g.get_total_games()){
+        cout << "sim" << endl;
+      }else{
+        cout << "nao" << endl;
+      }
+    }
     auto stop = high_resolution_clock::now();
+
     auto duration = duration_cast<nanoseconds>(stop - start);
-    //print results
-    cout << max_flow << endl;
 
-    /* DATA ANALISIS FOR FF FUNCTS */
-    //pessimistic complexity calc
-    /*
+    /* stores timings in the csv_file */
+    
     long long tempo_ns = duration.count();
-    long long n = g.get_num_vertex();
-    long long m = g.get_num_edges();
 
-    long long complexity = n * m * (n + m);
-
-    // real_time / complexity
-    double real_over_theoretical = (double)tempo_ns / complexity;
-
-    auto si_l = l.get_si() / g.get_num_itr();
-    auto ti_l =  l.get_ti() / g.get_num_itr();
-
-    if(csv_file.is_open()){
-      csv_file << test_file << ",";
-      csv_file << g.get_num_vertex() << ",";
-      csv_file << g.get_num_edges() << ",";
-      csv_file << g.get_num_itr() << ",";
-      csv_file << limit << ",";
-      csv_file << g.get_num_itr() / limit << ',';
-      csv_file << si_l << ',';
-      csv_file << ti_l << ',';
-      csv_file << l.get_inserts() / g.get_num_itr()  << ',';
-      csv_file << l.get_deletes() / g.get_num_itr() << ',';
-      csv_file << l.get_updates() / g.get_num_itr() << ',';
-      csv_file << smallest_path << ',';
-      csv_file << si_l*g.get_num_vertex() + ti_l*g.get_num_edges() + accumulate(hops_per_itr.begin(), hops_per_itr.end(), 0) << ',';
+    if(csv_file.is_open() && should_doc_time){
+      csv_file << g.get_num_teams() << ",";
       csv_file << duration.count()/1e6 << ",";
-      csv_file << real_over_theoretical << '\n';
+      csv_file << tempo_ns << endl;
 
       csv_file.close();
     }
-  */
 }
